@@ -1,0 +1,456 @@
+File: ./thread.c
+1: /* ************************************************************************** */
+2: /*                                                                            */
+3: /*                                                        :::      ::::::::   */
+4: /*   thread.c                                           :+:      :+:    :+:   */
+5: /*                                                    +:+ +:+         +:+     */
+6: /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
+7: /*                                                +#+#+#+#+#+   +#+           */
+8: /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
+9: /*   Updated: 2025/02/20 23:38:52 by shiori           ###   ########.fr       */
+10: /*                                                                            */
+11: /* ************************************************************************** */
+12: 
+13: #include "philo.h"
+14: 
+15: void	thread_create(t_program *program)
+16: {
+17: 	pthread_t	monitor;
+18: 	int			i;
+19: 
+20: 	pthread_create(&monitor, NULL,monitor_routine, program->philos);
+21: 	i = 0;
+22: 	while (i < program->num_of_philos)
+23: 	{
+24: 		pthread_create(&program->philos[i].thread, NULL,philo_routine,
+25: 				&program->philos[i]);
+26: 		i++;
+27: 	}
+28: 	i = 0;
+29: 	pthread_join(monitor,NULL);
+30:     i = 0;
+31: 	while (i < program->num_of_philos)
+32: 	{
+33: 		pthread_join(program->philos[i].thread,NULL);
+34: 		i++;
+35: 	}
+36: }
+37: 
+38: int should_stop_simulation(t_philo *philo)
+39: {
+40:     int should_stop;
+41: 
+42:     pthread_mutex_lock(philo->stop_mutex);
+43:     should_stop = *philo->should_stop;
+44:     pthread_mutex_unlock(philo->stop_mutex);
+45:     return should_stop;
+46: }
+47: 
+48: 
+49: void print_status(t_philo *philo,const char *status)
+50: {
+51:     if (should_stop_simulation(philo))
+52:         return ;
+53:     pthread_mutex_lock(philo->print_mutex);
+54:     printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status);
+55:     pthread_mutex_unlock(philo->print_mutex);
+56: }
+57: 
+58: void *philo_routine(void *argv)
+59: {
+60:     t_philo *philo;
+61:     
+62:     philo= (t_philo *)argv;
+63:     if (philo->id % 2 == 0)
+64:         ft_usleep(1);
+65:     while (!should_stop_simulation(philo))
+66:     {
+67:         take_forks(philo);
+68:         eating(philo);
+69:         put_down_forks(philo);
+70:         sleeping(philo);
+71:         thinking(philo);
+72:     }
+73:     pthread_exit(NULL);
+74: }
+
+File: ./monitor.c
+1: /* ************************************************************************** */
+2: /*                                                                            */
+3: /*                                                        :::      ::::::::   */
+4: /*   monitor.c                                          :+:      :+:    :+:   */
+5: /*                                                    +:+ +:+         +:+     */
+6: /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
+7: /*                                                +#+#+#+#+#+   +#+           */
+8: /*   Created: 2025/02/16 17:06:14 by shiori            #+#    #+#             */
+9: /*   Updated: 2025/02/21 00:02:59 by shiori           ###   ########.fr       */
+10: /*                                                                            */
+11: /* ************************************************************************** */
+12: 
+13: #include "philo.h"
+14: 
+15: int	check_any_philosopher_death(t_philo *philos)
+16: {
+17:     long current_time;
+18:     long since_last_meal_time;
+19:     int is_dead;
+20:     int i;
+21: 
+22:     
+23:     i = 0;
+24:     while (i < philos[0].num_of_philos)
+25:     {
+26:         pthread_mutex_lock(philos[i].time_mutex);
+27:         current_time = get_current_time();
+28:         since_last_meal_time = current_time - philos[i].last_meal_time;
+29:         pthread_mutex_unlock(philos[i].time_mutex);
+30:         is_dead = 0;
+31:         if((since_last_meal_time >= philos[i].time_to_die))
+32:             is_dead = 1;
+33:         if (is_dead)
+34:         {
+35:             pthread_mutex_lock(philos[0].stop_mutex);
+36:             *(philos[0].should_stop) = true;
+37:             pthread_mutex_unlock(philos[0].stop_mutex);
+38:             print_status(&philos[i], DIED);
+39:             return (is_dead);
+40:         }
+41:         i++;
+42:     }
+43:     return (0);
+44: }
+45: 
+46: 
+47: int check_all_philosophers_satisfied(t_philo *philos)
+48: {
+49:     int i;
+50:     int satisfied_count;
+51:     
+52:     satisfied_count = 0;
+53:     if (philos[0].must_eat_count == -1)
+54:         return (0);
+55:     i = 0;
+56:     while (i < philos[0].num_of_philos)
+57:     {
+58:         pthread_mutex_lock(philos[i].eat_mutex);
+59:         if (philos[i].eat_count >= philos[i].must_eat_count)
+60:             satisfied_count++;
+61:         pthread_mutex_unlock(philos[i].eat_mutex);
+62:         i++;
+63:     }
+64:     if (satisfied_count == philos[0].num_of_philos)
+65:     {
+66:         pthread_mutex_lock(philos[0].stop_mutex);
+67:         *(philos[0].should_stop) = true;  // 修正: 正しいポインタを使用
+68:         pthread_mutex_unlock(philos[0].stop_mutex);        
+69:         return (1);
+70:     }
+71:     return (0);
+72: }
+73:    
+74: void *monitor_routine(void *argv)
+75: {
+76:     t_philo *philos;
+77: 
+78:     philos = (t_philo *)argv;
+79:     while (1)
+80:     {
+81:        if (check_any_philosopher_death(philos))
+82:                 break; 
+83:         if (check_all_philosophers_satisfied(philos))
+84:                 break; 
+85:     }
+86:     return (NULL);
+87: }
+88:  
+
+File: ./init.c
+1: // // philos/philo/init.c
+2: // /* ************************************************************************** */
+3: // /*                                                                            */
+4: // /*                                                        :::      ::::::::   */
+5: // /*   init.c                                             :+:      :+:    :+:   */
+6: // /*                                                    +:+ +:+         +:+     */
+7: // /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
+8: // /*                                                +#+#+#+#+#+   +#+           */
+9: // /*   Created: 2025/02/16 17:05:55 by shiori            #+#    #+#             */
+10: // /*   Updated: 2025/02/16 18:21:49 by shiori           ###   ########.fr       */
+11: // /*                                                                            */
+12: // /* ************************************************************************** */
+13: 
+14: #include "philo.h"
+15: 
+16: void	init_input(t_philo *philo, char **argv)
+17: {
+18: 	philo->num_of_philos = ft_atoi(argv[1]);
+19: 	philo->time_to_die = ft_atoi(argv[2]);
+20: 	philo->time_to_eat = ft_atoi(argv[3]);
+21: 	philo->time_to_sleep = ft_atoi(argv[4]);
+22: 	if (argv[5])
+23: 		philo->must_eat_count = ft_atoi(argv[5]);
+24: 	else
+25: 		philo->must_eat_count = -1;
+26: }
+27: 
+28: void	init_philos(t_philo *philos, t_program *program, char **argv)
+29: {
+30: 	int	i;
+31: 
+32: 	i = 0;
+33:     while (i < program->num_of_philos)
+34: 	{
+35:         philos[i].id = i + 1;
+36: 		philos[i].eat_count = 0;
+37:         init_input(&philos[i], argv);
+38:         philos[i].last_meal_time = get_current_time();
+39: 		philos[i].start_time = get_current_time();
+40: 		philos[i].print_mutex = &program->print_mutex;
+41: 		philos[i].eat_mutex = &program->eat_mutex;
+42: 		philos[i].stop_mutex = &program->stop_mutex;
+43: 		philos[i].time_mutex = &program->time_mutex;
+44: 		philos[i].should_stop = &program->should_stop;
+45:         philos[i].all_satisfied = &program->all_satisfied;
+46: 		philos[i].left_fork = &program->forks[i];
+47: 		if (i == 0)
+48: 			philos[i].right_fork = &program->forks[philos[i].num_of_philos - 1];
+49: 		else
+50: 			philos[i].right_fork = &program->forks[i - 1];
+51: 		i++;
+52: 	}
+53: }
+54: 
+55: 
+56: void init_forks(t_program *program)
+57: {
+58:     int i;
+59:     pthread_mutex_t *forks;
+60:     
+61:     i = 0;
+62:     forks = program->forks;
+63:     while (i < program->num_of_philos)
+64:     {
+65:         pthread_mutex_init(&forks[i],NULL);
+66:         i++;
+67:     }
+68: }
+69: void   init_program(t_program *program)
+70: {
+71:     program->should_stop = false;
+72:     program->all_satisfied = false;
+73:     program->philos = malloc(sizeof(t_philo) * program->num_of_philos);
+74:     if (!program->philos)
+75:         cleanup_resources("Error: Malloc failed", program);
+76:     pthread_mutex_init(&program->print_mutex, NULL);
+77:     pthread_mutex_init(&program->eat_mutex, NULL);
+78:     pthread_mutex_init(&program->stop_mutex, NULL);
+79:     pthread_mutex_init(&program->time_mutex, NULL);
+80:     program->forks = malloc(sizeof(pthread_mutex_t) * program->num_of_philos);
+81:     if (!program->forks)
+82:         cleanup_resources("Error: Malloc failed", program);
+83:     init_forks(program);
+84: }
+85: 
+86: 
+87: 
+88: 
+89: 
+90: 
+91: 
+
+File: ./utils.c
+1: /* ************************************************************************** */
+2: /*                                                                            */
+3: /*                                                        :::      ::::::::   */
+4: /*   utils.c                                            :+:      :+:    :+:   */
+5: /*                                                    +:+ +:+         +:+     */
+6: /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
+7: /*                                                +#+#+#+#+#+   +#+           */
+8: /*   Created: 2025/02/16 17:10:04 by shiori            #+#    #+#             */
+9: /*   Updated: 2025/02/20 23:41:13 by shiori           ###   ########.fr       */
+10: /*                                                                            */
+11: /* ************************************************************************** */
+12: 
+13: #include "philo.h"
+14: 
+15: long get_current_time() {
+16:     struct timeval tv;
+17:     
+18:     gettimeofday(&tv, NULL);
+19:     return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+20: }
+21: 
+22: void    ft_usleep(long milliseconds)
+23: {
+24: 	long	start;
+25: 
+26: 	start = get_current_time();
+27: 	while ((get_current_time() - start) < milliseconds)
+28: 		usleep(500);
+29: }
+30: 
+31: 
+32: int	ft_strlen(char *str)
+33: {
+34: 	int	i;
+35: 
+36: 	i = 0;
+37: 	while (str[i])
+38: 		i++;
+39: 	return (i);
+40: }
+41: 
+42: void cleanup_resources(char *str, t_program *program)
+43: {
+44:     int i;
+45:     
+46:     if (str)
+47:     {
+48:         write(2, str, ft_strlen(str));
+49:         write(2, "\n", 1);
+50:     }
+51:     pthread_mutex_destroy(&program->print_mutex);
+52:     pthread_mutex_destroy(&program->eat_mutex);
+53:     pthread_mutex_destroy(&program->stop_mutex);
+54:     pthread_mutex_destroy(&program->time_mutex);
+55:     i = 0;
+56:     while (i < program->num_of_philos)
+57:     {
+58:         pthread_mutex_destroy(&program->forks[i]);
+59:         i++;
+60:     }
+61:     free(program->forks);
+62:     free(program->philos);
+63: }
+64: 
+65: 
+66: 
+67: int ft_atoi(const char *str)
+68: {
+69:     int i=0;
+70:     int sign=1;
+71:     int result=0;
+72:   
+73:     if(str[i]=='-' || str[i]=='+')
+74:     {
+75:         if(str[i]=='-')
+76:             sign=-1;
+77:         i++;
+78:     }
+79:     while(str[i]>='0' && str[i]<='9')
+80:     {
+81:         result=result*10+(str[i]-'0');
+82:         i++;
+83:     } 
+84:     return (sign*result);
+85: }
+
+File: ./main.c
+1: /* ************************************************************************** */
+2: /*                                                                            */
+3: /*                                                        :::      ::::::::   */
+4: /*   main.c                                             :+:      :+:    :+:   */
+5: /*                                                    +:+ +:+         +:+     */
+6: /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
+7: /*                                                +#+#+#+#+#+   +#+           */
+8: /*   Created: 2025/02/16 17:06:04 by shiori            #+#    #+#             */
+9: /*   Updated: 2025/02/17 03:44:30 by shiori           ###   ########.fr       */
+10: /*                                                                            */
+11: /* ************************************************************************** */
+12: 
+13: #include "philo.h"
+14: 
+15: int validate_command_line_args(char **argv)
+16: {
+17:     if (ft_atoi(argv[1]) <= 0 || ft_atoi(argv[2]) <= 0 ||
+18:         ft_atoi(argv[3]) <= 0 || ft_atoi(argv[4]) <= 0 || ((argv[5] && ft_atoi(argv[5]) <= 0) && (ft_atoi(argv[5]) < 0)))
+19:         return (1);
+20:     return (0);
+21: }
+22: 
+23: int main(int argc, char **argv)
+24: {
+25:     t_program program;
+26:     
+27:     if (argc != 5 && argc != 6)
+28: 		return (write(2, "Error: Wrong argument count\n", 28), 1);
+29:     program.num_of_philos = ft_atoi(argv[1]);
+30:     if (validate_command_line_args(argv) == 1)
+31: 		return (write(2, "Error: Invalid argument\n", 24), 1);
+32:     init_program(&program);
+33: 	init_philos(program.philos, &program, argv);
+34:     thread_create(&program);
+35:     cleanup_resources(NULL, &program);
+36:     return (0);
+37: }
+
+File: ./philo_routine.c
+1: /* ************************************************************************** */
+2: /*                                                                            */
+3: /*                                                        :::      ::::::::   */
+4: /*   philo_routine.c                              :+:      :+:    :+:   */
+5: /*                                                    +:+ +:+         +:+     */
+6: /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
+7: /*                                                +#+#+#+#+#+   +#+           */
+8: /*   Created: 2025/02/16 17:06:11 by shiori            #+#    #+#             */
+9: /*   Updated: 2025/02/16 17:07:23 by shiori           ###   ########.fr       */
+10: /*                                                                            */
+11: /* ************************************************************************** */
+12: 
+13: // philo_routine.c
+14: #include "philo.h"
+15: 
+16: void thinking(t_philo *philo)
+17: {
+18:     print_status(philo, THINKING);
+19: }
+20: void sleeping(t_philo *philo)
+21: {
+22:     print_status(philo, SLEEPING);
+23:     ft_usleep(philo->time_to_sleep);
+24: }
+25: 
+26: void take_forks(t_philo *philo)
+27: {
+28: 
+29:     if (philo->num_of_philos == 1)
+30:     {
+31:         pthread_mutex_lock(philo->right_fork);
+32:         print_status(philo, FORK_TAKEN);
+33:         ft_usleep(philo->time_to_die);
+34:         pthread_mutex_unlock(philo->right_fork);
+35:         return ;
+36:     }
+37:     if(philo->id %2==1)
+38:     {
+39:         ft_usleep(200);
+40:         pthread_mutex_lock(philo->right_fork);
+41:         pthread_mutex_lock(philo->left_fork);
+42:         print_status(philo, FORK_TAKEN);
+43:         print_status(philo, FORK_TAKEN);
+44:     }else
+45:     {
+46:         pthread_mutex_lock(philo->left_fork);
+47:         pthread_mutex_lock(philo->right_fork);
+48:         print_status(philo, FORK_TAKEN);
+49:         print_status(philo, FORK_TAKEN);
+50:     }
+51: }
+52: 
+53: void eating(t_philo *philo)
+54: {
+55:     pthread_mutex_lock(philo->time_mutex);
+56:     philo->last_meal_time = get_current_time();
+57:     pthread_mutex_unlock(philo->time_mutex);
+58:     pthread_mutex_lock(philo->eat_mutex);
+59:     philo->eat_count++;
+60:     pthread_mutex_unlock(philo->eat_mutex);
+61:     print_status(philo, EATING);
+62:     ft_usleep(philo->time_to_eat);
+63: }
+64: 
+65: void put_down_forks(t_philo *philo)
+66: {
+67:     pthread_mutex_unlock(philo->left_fork);
+68:     pthread_mutex_unlock(philo->right_fork);
+69: }
+
