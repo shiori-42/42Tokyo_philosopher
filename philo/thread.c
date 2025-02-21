@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/21 14:06:23 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/21 16:43:38 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,6 @@ int should_stop_simulation(t_philo *philo)
     return should_stop;
 }
 
-
-// void print_status(t_philo *philo,const char *status)
-// {
-//     pthread_mutex_lock(philo->stop_mutex);
-//     if (strcmp(status, DIED) == 0) 
-//         printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status); 
-//     if(!philo->should_stop)
-//         printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status);
-//     pthread_mutex_unlock(philo->stop_mutex);
-// }
 
 void print_status(t_philo *philo,const char *status)
 {

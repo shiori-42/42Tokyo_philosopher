@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:10:04 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/21 13:59:08 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/21 15:19:41 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void    ft_usleep(long milliseconds)
 
 	start = get_current_time();
 	while ((get_current_time() - start) < milliseconds)
-		usleep(500);
+		usleep(100);
 }
 
 
