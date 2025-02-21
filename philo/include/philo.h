@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:21:20 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/20 23:44:39 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/21 13:58:22 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,8 @@ typedef struct s_philo
     int             must_eat_count;
     pthread_mutex_t *right_fork;
     pthread_mutex_t *left_fork;
-    pthread_mutex_t *print_mutex;
-    pthread_mutex_t *eat_mutex;
     pthread_mutex_t *stop_mutex;
+    pthread_mutex_t *eat_mutex;
     pthread_mutex_t *time_mutex;
 } t_philo;
 
@@ -54,9 +53,8 @@ typedef struct s_program {
     bool should_stop;
     bool all_satisfied;
     pthread_mutex_t *forks;
-    pthread_mutex_t print_mutex;
-    pthread_mutex_t eat_mutex;
     pthread_mutex_t stop_mutex;
+    pthread_mutex_t eat_mutex;
     pthread_mutex_t time_mutex;
     t_philo *philos;
 } t_program;

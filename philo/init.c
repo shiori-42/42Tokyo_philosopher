@@ -37,9 +37,8 @@ void	init_philos(t_philo *philos, t_program *program, char **argv)
         init_input(&philos[i], argv);
         philos[i].last_meal_time = get_current_time();
 		philos[i].start_time = get_current_time();
-		philos[i].print_mutex = &program->print_mutex;
-		philos[i].eat_mutex = &program->eat_mutex;
 		philos[i].stop_mutex = &program->stop_mutex;
+		philos[i].eat_mutex = &program->eat_mutex;
 		philos[i].time_mutex = &program->time_mutex;
 		philos[i].should_stop = &program->should_stop;
         philos[i].all_satisfied = &program->all_satisfied;
@@ -73,9 +72,8 @@ void   init_program(t_program *program)
     program->philos = malloc(sizeof(t_philo) * program->num_of_philos);
     if (!program->philos)
         cleanup_resources("Error: Malloc failed", program);
-    pthread_mutex_init(&program->print_mutex, NULL);
-    pthread_mutex_init(&program->eat_mutex, NULL);
     pthread_mutex_init(&program->stop_mutex, NULL);
+    pthread_mutex_init(&program->eat_mutex, NULL);
     pthread_mutex_init(&program->time_mutex, NULL);
     program->forks = malloc(sizeof(pthread_mutex_t) * program->num_of_philos);
     if (!program->forks)

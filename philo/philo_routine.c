@@ -36,7 +36,10 @@ void take_forks(t_philo *philo)
     }
     if(philo->id %2==1)
     {
-        ft_usleep(200);
+        pthread_mutex_lock(philo->eat_mutex);
+        if(philo->eat_count == 0)
+            ft_usleep(1);
+        pthread_mutex_unlock(philo->eat_mutex);
         pthread_mutex_lock(philo->right_fork);
         pthread_mutex_lock(philo->left_fork);
         print_status(philo, FORK_TAKEN);

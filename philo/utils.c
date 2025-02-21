@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:10:04 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/20 23:41:13 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/21 13:59:08 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,8 @@ void cleanup_resources(char *str, t_program *program)
         write(2, str, ft_strlen(str));
         write(2, "\n", 1);
     }
-    pthread_mutex_destroy(&program->print_mutex);
-    pthread_mutex_destroy(&program->eat_mutex);
     pthread_mutex_destroy(&program->stop_mutex);
+    pthread_mutex_destroy(&program->eat_mutex);
     pthread_mutex_destroy(&program->time_mutex);
     i = 0;
     while (i < program->num_of_philos)

@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:06:14 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/21 13:33:59 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/21 14:15:13 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int check_all_philosophers_satisfied(t_philo *philos)
     if (satisfied_count == philos[0].num_of_philos)
     {
         pthread_mutex_lock(philos[0].stop_mutex);
-        *(philos[0].should_stop) = true;  // 修正: 正しいポインタを使用
+        *(philos[0].should_stop) = true;
         pthread_mutex_unlock(philos[0].stop_mutex);        
         return (1);
     }
@@ -78,11 +78,12 @@ void *monitor_routine(void *argv)
     philos = (t_philo *)argv;
     while (1)
     {
-       if (check_any_philosopher_death(philos))
-                break; 
+        if (check_any_philosopher_death(philos))
+            break; 
         if (check_all_philosophers_satisfied(philos))
-                break; 
+            break; 
     }
     return (NULL);
 }
+
  
