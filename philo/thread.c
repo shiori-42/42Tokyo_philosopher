@@ -6,11 +6,12 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/21 00:06:19 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/21 13:35:34 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <string.h>
 
 void	thread_create(t_program *program)
 {
@@ -47,11 +48,18 @@ int should_stop_simulation(t_philo *philo)
 
 void print_status(t_philo *philo,const char *status)
 {
-    if (should_stop_simulation(philo))
-        return ;
-    pthread_mutex_lock(philo->print_mutex);
-    printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status);
-    pthread_mutex_unlock(philo->print_mutex);
+    if (!should_stop_simulation(philo))
+    {
+        pthread_mutex_lock(philo->print_mutex);
+        printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status);
+        pthread_mutex_unlock(philo->print_mutex);
+    }
+    else if (strcmp(status, DIED) == 0) 
+    {
+        pthread_mutex_lock(philo->print_mutex);
+        printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status);
+        pthread_mutex_unlock(philo->print_mutex);
+    }
 }
 
 void *philo_routine(void *argv)
