@@ -41,7 +41,6 @@ void	init_philos(t_philo *philos, t_program *program, char **argv)
 		philos[i].eat_mutex = &program->eat_mutex;
 		philos[i].time_mutex = &program->time_mutex;
 		philos[i].should_stop = &program->should_stop;
-        philos[i].all_satisfied = &program->all_satisfied;
 		philos[i].left_fork = &program->forks[i];
 		if (i == 0)
 			philos[i].right_fork = &program->forks[philos[i].num_of_philos - 1];
@@ -68,7 +67,6 @@ void init_forks(t_program *program)
 void   init_program(t_program *program)
 {
     program->should_stop = false;
-    program->all_satisfied = false;
     program->philos = malloc(sizeof(t_philo) * program->num_of_philos);
     if (!program->philos)
         cleanup_resources("Error: Malloc failed", program);

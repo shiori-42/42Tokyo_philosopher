@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/21 16:43:38 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/21 20:14:06 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@ void	thread_create(t_program *program)
 	int			i;
     
 	i = 0;
+    pthread_create(&monitor, NULL,monitor_routine, program->philos);
 	while (i < program->num_of_philos)
 	{
         pthread_create(&program->philos[i].thread, NULL,philo_routine,
             &program->philos[i]);
             i++;
-        }
-    pthread_create(&monitor, NULL,monitor_routine, program->philos);
+    }
     i = 0;
 	while (i < program->num_of_philos)
 	{
@@ -60,6 +60,8 @@ void print_status(t_philo *philo,const char *status)
         pthread_mutex_unlock(philo->stop_mutex);
     }
 }
+
+
 
 void *philo_routine(void *argv)
 {
