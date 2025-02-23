@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:06:04 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 18:59:19 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/23 20:11:54 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,16 @@ int main(int argc, char **argv)
     if (validate_command_line_args(argv) == 1)
         return (write(2, "Error: Invalid argument\n", 24), 1);
     init_program(&program, argv);
+    program.philos = malloc(sizeof(t_philo) * program.num_of_philos);
     if (!program.philos)
-        return (write(2, "Error: Philosopher memory allocation failed\n", 24), 1);
+        return (write(2, "Error: Philosopher memory allocation failed\n", 42), 1);
     if(init_mutex(&program))
-        return (write(2, "Error: Mutex initialization failed\n", 24), 1);
+        return (write(2, "Error: Mutex initialization failed\n", 33), 1);
 	init_philos(&program, argv);
     if(thread_create(&program))
-        return (write(2, "Error: Thread creation failed\n", 24), 1);
+        return (write(2, "Error: Thread creation failed\n", 29), 1);
     if(thread_join(&program))
-        return (write(2, "Error: Thread join failed\n", 24), 1);
+        return (write(2, "Error: Thread join failed\n", 25), 1);
     free_all_memory(&program);
     return (0);
 }

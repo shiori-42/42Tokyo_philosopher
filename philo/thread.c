@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 18:46:31 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/23 22:43:37 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ int thread_join(t_program *program)
 
 }
 
-
 int must_stop_simulation(t_philo *philo)
 {
     int is_must_stop;
@@ -98,4 +97,6 @@ void *philo_routine(void *argv)
     // printf("%d exit\n",philo->id);
     return NULL;
 }
+
+
 

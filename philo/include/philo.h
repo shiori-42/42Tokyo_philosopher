@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:21:20 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 19:06:07 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/23 22:10:11 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ typedef struct s_philo
     pthread_t		thread;
     int             id;
     int             eat_count;
+    int             *ate_philos_num;
     long            start_time;
     long            last_meal_time;
     bool            *must_stop;
@@ -50,12 +51,13 @@ typedef struct s_philo
 typedef struct s_program {
     pthread_t monitor;
     int				num_of_philos;
+    int ate_philos_num;
     bool must_stop;
     pthread_mutex_t *forks;
     pthread_mutex_t stop_mutex;
     pthread_mutex_t eat_mutex;
     pthread_mutex_t time_mutex;
-     bool stop_mutex_init;
+    bool stop_mutex_init;
     bool eat_mutex_init;
     bool time_mutex_init;
     bool *forks_init;

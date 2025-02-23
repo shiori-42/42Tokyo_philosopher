@@ -24,6 +24,7 @@ void	set_philo_input(t_program *program,t_philo *philo, char **argv, int i)
         philo->must_eat_count = -1;
     philo->id = i + 1;
     philo->eat_count = 0;
+    philo->ate_philos_num = &program->ate_philos_num;
     philo->start_time = get_current_time();
     philo->last_meal_time = get_current_time();
     philo->must_stop = &program->must_stop;
@@ -54,8 +55,8 @@ static int init_basic_mutexes(t_program *program)
 
     if (pthread_mutex_init(&program->eat_mutex, NULL) != 0)
         return (free_all_memory(program), 1);
-    program->eat_mutex_init = true;
-
+    program->eat_mutex_init = true;   
+    
     if (pthread_mutex_init(&program->time_mutex, NULL) != 0)
         return (free_all_memory(program), 1);
     program->time_mutex_init = true;
@@ -90,8 +91,8 @@ int init_mutex(t_program *program)
 void init_program(t_program *program, char **argv)
 {
     program->num_of_philos = ft_atoi(argv[1]);
+    program->ate_philos_num = 0;
     program->must_stop = false;
-    program->philos = malloc(sizeof(t_philo) * program->num_of_philos);
     program->stop_mutex_init = false;
     program->eat_mutex_init = false;
     program->time_mutex_init = false;

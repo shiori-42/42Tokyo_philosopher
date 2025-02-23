@@ -50,16 +50,19 @@ void take_forks(t_philo *philo)
 
 void eating(t_philo *philo)
 {
-
     pthread_mutex_lock(philo->time_mutex);
     philo->last_meal_time = get_current_time();
     pthread_mutex_unlock(philo->time_mutex);
     print_status(philo, EATING);
     ft_usleep(philo->time_to_eat);
-    pthread_mutex_lock(philo->eat_mutex);
     philo->eat_count++;
-    // printf("philo id %d:philo->eat_count: %d\n", philo->id,philo->eat_count);
-    pthread_mutex_unlock(philo->eat_mutex);
+    // printf("philo id %d eat count %d\n", philo->id, philo->eat_count);
+   if(philo->must_eat_count > 0 && philo->eat_count == philo->must_eat_count)
+    {
+        pthread_mutex_lock(philo->eat_mutex);
+        (*philo->ate_philos_num)++;
+        pthread_mutex_unlock(philo->eat_mutex);
+    }
 
 }
 
