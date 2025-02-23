@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/24 01:20:11 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/24 02:00:59 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int thread_create(t_program *program)
 
     int i = 0;
 
-    if(pthread_create(&program->monitor, NULL, monitor_routine, program->philos)!=0)
+    if(pthread_create(&program->monitor, NULL, monitor_routine, program)!=0)
     {
         free_all_memory(program);
         return(write(2, "Error: Failed to create monitor thread\n", 39), 1);

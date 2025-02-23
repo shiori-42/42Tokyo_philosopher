@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:21:20 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/24 01:39:08 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/24 01:52:20 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,16 @@ typedef struct s_philo
 {
     pthread_t		thread;
     int             id;
-    int             eat_count;
-    int             *ate_philos_num;
-    long            start_time;
-    long            last_meal_time;
-    bool            *must_stop;
     int				num_of_philos;
     long			time_to_die;
     long			time_to_eat;
     long			time_to_sleep;
     int             must_eat_count;
+    int             eat_count;
+    int             *ate_philos_num;
+    bool            *must_stop;
+    long            start_time;
+    long            last_meal_time;
     pthread_mutex_t *right_fork;
     pthread_mutex_t *left_fork;
     pthread_mutex_t *stop_mutex;

@@ -16,15 +16,16 @@ void	set_philo_input(t_program *program,t_philo *philo, int i)
 {
 	
     philo->id = i + 1;
-    philo->eat_count = 0;
-    philo->ate_philos_num = &program->ate_philos_num;
+    philo->num_of_philos = program->num_of_philos;
     philo->time_to_die = program->time_to_die;
 	philo->time_to_eat = program->time_to_eat;
 	philo->time_to_sleep = program->time_to_sleep;
 	philo->must_eat_count = program->must_eat_count;
+    philo->eat_count = 0;
+    philo->ate_philos_num = &program->ate_philos_num;
+    philo->must_stop = &program->must_stop;
     philo->start_time = get_current_time();
     philo->last_meal_time = get_current_time();
-    philo->must_stop = &program->must_stop;
     philo->stop_mutex = &program->stop_mutex;
     philo->eat_mutex = &program->eat_mutex;
     philo->time_mutex = &program->time_mutex;
@@ -88,11 +89,6 @@ int init_mutex(t_program *program)
 void init_program(t_program *program, char **argv)
 {
     program->num_of_philos = ft_atoi(argv[1]);
-    program->ate_philos_num = 0;
-    program->must_stop = false;
-    program->stop_mutex_init = false;
-    program->eat_mutex_init = false;
-    program->time_mutex_init = false;
 	program->time_to_die = ft_atoi(argv[2]);
 	program->time_to_eat = ft_atoi(argv[3]);
 	program->time_to_sleep = ft_atoi(argv[4]);
@@ -100,6 +96,11 @@ void init_program(t_program *program, char **argv)
 		program->must_eat_count = ft_atoi(argv[5]);
 	else
         program->must_eat_count = -1;
+    program->ate_philos_num = 0;
+    program->must_stop = false;
+    program->stop_mutex_init = false;
+    program->eat_mutex_init = false;
+    program->time_mutex_init = false;
 }
 
 
