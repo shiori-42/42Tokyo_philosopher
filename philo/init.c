@@ -46,10 +46,8 @@ void	init_philos(t_program *program, char **argv)
 	}
 }
 
-int init_mutex(t_program *program)
+static int init_basic_mutexes(t_program *program)
 {
-    int i;
-    
     if (pthread_mutex_init(&program->stop_mutex, NULL) != 0)
         return (free_all_memory(program), 1);
     program->stop_mutex_init = true;
@@ -61,6 +59,16 @@ int init_mutex(t_program *program)
     if (pthread_mutex_init(&program->time_mutex, NULL) != 0)
         return (free_all_memory(program), 1);
     program->time_mutex_init = true;
+
+    return (0);
+}
+
+int init_mutex(t_program *program)
+{
+    int i;
+    
+    if (init_basic_mutexes(program))
+        return (1);
 
     program->forks = malloc(sizeof(pthread_mutex_t) * program->num_of_philos);
     program->forks_init = malloc(sizeof(bool) * program->num_of_philos);

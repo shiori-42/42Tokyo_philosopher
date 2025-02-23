@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:06:04 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 13:24:58 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/23 18:59:19 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,6 @@ int validate_command_line_args(char **argv)
         return (1);
     return (0);
 }
-
-
-
-#include <signal.h>
 
 int main(int argc, char **argv)
 {

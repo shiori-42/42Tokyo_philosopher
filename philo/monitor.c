@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:06:14 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 13:56:11 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/23 19:22:17 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ int check_any_philosopher_death(t_philo *philos)
         
         if (since_last_meal_time >= philos[i].time_to_die)
         {
-            print_status(&philos[i], DIED);
             pthread_mutex_lock(philos[0].stop_mutex);
             *philos[0].must_stop = true;
             pthread_mutex_unlock(philos[0].stop_mutex);
+            print_status(&philos[i], DIED);
             return (1);
         }
         i++;
@@ -45,12 +45,12 @@ int check_all_philosophers_ate(t_philo *philos)
     if (philos[0].must_eat_count == -1)
         return (0);
     
-    pthread_mutex_lock(philos[0].eat_mutex);  // 一度のロックで全ての確認を行う
+    pthread_mutex_lock(philos[0].eat_mutex);
     while (i < philos[0].num_of_philos)
     {
-        if (philos[i].eat_count >= philos[i].must_eat_count)
+        if (philos[i].eat_count == philos[i].must_eat_count)
             ate_count++;
-        i++;
+        i++
     }
     pthread_mutex_unlock(philos[0].eat_mutex);
 

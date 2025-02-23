@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:10:04 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 03:03:11 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/23 19:01:15 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,41 +31,21 @@ int	ft_usleep(long milliseconds)
 	return (0);
 }
 
-int	ft_strlen(char *str)
+static void destroy_basic_mutexes(t_program *program)
 {
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
-int	ft_strcmp(char *s1, char *s2)
-{
-	size_t	i;
-
-	i = 0;
-	while (s1[i] || s2[i])
-	{
-		if ((s1[i] != s2[i] || !s1[i] || !s2[i]))
-			return (s1[i] - s2[i]);
-		i++;
-	}
-	return (0);
-}
-
-
-void free_all_memory(t_program *program)
-{
-    int i;
-
     if (program->stop_mutex_init)
         pthread_mutex_destroy(&program->stop_mutex);
     if (program->eat_mutex_init)
         pthread_mutex_destroy(&program->eat_mutex);
     if (program->time_mutex_init)
         pthread_mutex_destroy(&program->time_mutex);
+}
+
+void free_all_memory(t_program *program)
+{
+    int i;
+
+    destroy_basic_mutexes(program);
 
     if (program->forks && program->forks_init)
     {
@@ -84,22 +64,4 @@ void free_all_memory(t_program *program)
         free(program->philos);
 }
 
-int ft_atoi(char *str)
-{
-    int i=0;
-    int sign=1;
-    int result=0;
-  
-    if(str[i]=='-' || str[i]=='+')
-    {
-        if(str[i]=='-')
-            sign=-1;
-        i++;
-    }
-    while(str[i]>='0' && str[i]<='9')
-    {
-        result=result*10+(str[i]-'0');
-        i++;
-    } 
-    return (sign*result);
-}
+

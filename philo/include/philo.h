@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:21:20 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 03:01:06 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/23 19:06:07 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,33 +55,45 @@ typedef struct s_program {
     pthread_mutex_t stop_mutex;
     pthread_mutex_t eat_mutex;
     pthread_mutex_t time_mutex;
-     bool stop_mutex_init;  // 追加
-    bool eat_mutex_init;   // 追加
-    bool time_mutex_init;  // 追加
-    bool *forks_init;      // 追加
+     bool stop_mutex_init;
+    bool eat_mutex_init;
+    bool time_mutex_init;
+    bool *forks_init;
     t_philo *philos;
 } t_program;
 
-void init_program(t_program *program, char **argv);
-int must_stop_simulation(t_philo *philo);
-int   init_mutex(t_program *program);
-void	init_philos(t_program *program, char **argv);
+
+// init.c
 void	set_philo_input(t_program *program,t_philo *philo, char **argv, int i);
+void	init_philos(t_program *program, char **argv);
+int   init_mutex(t_program *program);
+void init_program(t_program *program, char **argv);
+
+// thread.c
 int	thread_create(t_program *program);
 int thread_join(t_program *program);
+int must_stop_simulation(t_philo *philo);
+void    print_status(t_philo *philo,char *status);
 void    *philo_routine(void *arg);
+
+// monitor.c
 void    *monitor_routine(void *arg);
+
+// philo_routine.c
+void    thinking(t_philo *philo);
+void    sleeping(t_philo *philo);
 void    take_forks(t_philo *philo);
 void    eating(t_philo *philo);
 void    put_down_forks(t_philo *philo);
-void    sleeping(t_philo *philo);
-void    thinking(t_philo *philo);
+
+// utils.c
 long    get_current_time(void);
-void    print_status(t_philo *philo,char *status);
-int     ft_atoi(char *str);
 int   ft_usleep(long milliseconds);
 void free_all_memory(t_program *program);
+
+// libft.c 
 int	ft_strcmp(char *s1, char *s2);
+int     ft_atoi(char *str);
 
 
 #endif

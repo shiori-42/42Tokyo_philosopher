@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 13:55:54 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/23 18:46:31 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ void *philo_routine(void *argv)
     {
  
         take_forks(philo);
+        if (philo->num_of_philos == 1)
+            return NULL;
         eating(philo);
         put_down_forks(philo);
         sleeping(philo);
