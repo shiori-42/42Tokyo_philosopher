@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:06:04 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/24 01:38:05 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/24 02:25:05 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,20 @@ int main(int argc, char **argv)
     if(init_mutex(&program))
         return (write(2, "Error: Mutex initialization failed\n", 33), 1);
 	init_philos(&program);
+    // printf("Start simulation\n %d %li %li %li %d\n", 
+    // program.num_of_philos, 
+    // program.time_to_die, 
+    // program.time_to_eat, 
+    // program.time_to_sleep, 
+    // program.must_eat_count);
+
+    // printf("Start simulation\n %d %li %li %li %d\n",    
+    // program.philos[0].num_of_philos, 
+    // program.philos[0].time_to_die, 
+    // program.philos[0].time_to_eat, 
+    // program.philos[0].time_to_sleep, 
+    // program.philos[0].must_eat_count);
+
     if(thread_create(&program))
         return (write(2, "Error: Thread creation failed\n", 29), 1);
     if(thread_join(&program))
