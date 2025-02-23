@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// philo_routine.c
 #include "philo.h"
 
 void thinking(t_philo *philo)
@@ -34,33 +33,52 @@ void take_forks(t_philo *philo)
         pthread_mutex_unlock(philo->right_fork);
         return ;
     }
-    if(philo->id % 2 == 0)
-    {
-        ft_usleep(1);
+    // if(philo->id % 2 == 0)
+    // {
+        // ft_usleep(1);
         pthread_mutex_lock(philo->right_fork);
         pthread_mutex_lock(philo->left_fork);
-    }
-    else
-    {
-        pthread_mutex_lock(philo->left_fork);
-        pthread_mutex_lock(philo->right_fork);
-    }
+    // }
+    // else
+    // {
+        // pthread_mutex_lock(philo->left_fork);
+        // pthread_mutex_lock(philo->right_fork);
+    // }
     print_status(philo, FORK_TAKEN);
     print_status(philo, FORK_TAKEN);
 }
+
+// void eating(t_philo *philo)
+// {
+//     pthread_mutex_lock(philo->time_mutex);
+//     philo->last_meal_time = get_current_time();
+//     pthread_mutex_unlock(philo->time_mutex);
+
+//     print_status(philo, EATING);
+
+//     pthread_mutex_lock(philo->eat_mutex);
+//     philo->eat_count++;
+//     pthread_mutex_unlock(philo->eat_mutex);
+
+//     ft_usleep(philo->time_to_eat);
+// }
 
 void eating(t_philo *philo)
 {
+
     pthread_mutex_lock(philo->time_mutex);
     philo->last_meal_time = get_current_time();
     pthread_mutex_unlock(philo->time_mutex);
+
     print_status(philo, EATING);
+
     pthread_mutex_lock(philo->eat_mutex);
     philo->eat_count++;
+    // printf("philo id %d:philo->eat_count: %d\n", philo->id,philo->eat_count);
     pthread_mutex_unlock(philo->eat_mutex);
+
     ft_usleep(philo->time_to_eat);
 }
-
 
 void put_down_forks(t_philo *philo)
 {

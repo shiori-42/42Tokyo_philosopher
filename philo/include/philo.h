@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:21:20 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/21 20:06:59 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/23 03:01:06 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ typedef struct s_philo
     pthread_t		thread;
     int             id;
     int             eat_count;
-    long            last_meal_time;
     long            start_time;
-    bool            *should_stop;
+    long            last_meal_time;
+    bool            *must_stop;
     int				num_of_philos;
     long			time_to_die;
     long			time_to_eat;
@@ -48,32 +48,40 @@ typedef struct s_philo
 } t_philo;
 
 typedef struct s_program {
+    pthread_t monitor;
     int				num_of_philos;
-    bool should_stop;
+    bool must_stop;
     pthread_mutex_t *forks;
     pthread_mutex_t stop_mutex;
     pthread_mutex_t eat_mutex;
     pthread_mutex_t time_mutex;
+     bool stop_mutex_init;  // 追加
+    bool eat_mutex_init;   // 追加
+    bool time_mutex_init;  // 追加
+    bool *forks_init;      // 追加
     t_philo *philos;
 } t_program;
 
-int should_stop_simulation(t_philo *philo);
-void   init_program(t_program *program);
-void	init_philos(t_philo *philos, t_program *program, char **argv);
-void	thread_create(t_program *program);
+void init_program(t_program *program, char **argv);
+int must_stop_simulation(t_philo *philo);
+int   init_mutex(t_program *program);
+void	init_philos(t_program *program, char **argv);
+void	set_philo_input(t_program *program,t_philo *philo, char **argv, int i);
+int	thread_create(t_program *program);
+int thread_join(t_program *program);
 void    *philo_routine(void *arg);
 void    *monitor_routine(void *arg);
 void    take_forks(t_philo *philo);
 void    eating(t_philo *philo);
+void    put_down_forks(t_philo *philo);
 void    sleeping(t_philo *philo);
 void    thinking(t_philo *philo);
-void    put_down_forks(t_philo *philo);
 long    get_current_time(void);
-void    print_status(t_philo *philo, const char *status);
-int     ft_atoi(const char *str);
-void    ft_usleep(long milliseconds);
-void cleanup_resources(char *str, t_program *program);
-
+void    print_status(t_philo *philo,char *status);
+int     ft_atoi(char *str);
+int   ft_usleep(long milliseconds);
+void free_all_memory(t_program *program);
+int	ft_strcmp(char *s1, char *s2);
 
 
 #endif

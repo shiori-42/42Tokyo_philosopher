@@ -6,75 +6,94 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/21 20:14:06 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/23 13:55:54 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <string.h>
 
-void	thread_create(t_program *program)
+
+int thread_create(t_program *program)
 {
-    pthread_t	monitor;
-	int			i;
-    
-	i = 0;
-    pthread_create(&monitor, NULL,monitor_routine, program->philos);
-	while (i < program->num_of_philos)
-	{
-        pthread_create(&program->philos[i].thread, NULL,philo_routine,
-            &program->philos[i]);
-            i++;
+
+    int i = 0;
+
+    if(pthread_create(&program->monitor, NULL, monitor_routine, program->philos)!=0)
+    {
+        free_all_memory(program);
+        return(write(2, "Error: Failed to create monitor thread\n", 39), 1);
     }
-    i = 0;
-	while (i < program->num_of_philos)
-	{
-        pthread_join(program->philos[i].thread,NULL);
-		i++;
-	}
-    pthread_join(monitor,NULL);
+
+    while (i < program->num_of_philos)
+    {
+        if(pthread_create(&program->philos[i].thread, NULL, philo_routine, &program->philos[i])!=0)
+        {
+            free_all_memory(program);
+            return(write(2, "Error: Failed to create philosopher thread\n", 42), 1);
+        }
+        i++;
+    }
+    return (0);
 }
 
-int should_stop_simulation(t_philo *philo)
+int thread_join(t_program *program) 
 {
-    int should_stop;
+
+    int i;
+    
+    i = 0;
+    if(pthread_join(program->monitor, NULL)!=0)
+    {
+        free_all_memory(program);
+        return(write(2, "Error: Failed to join monitor thread\n", 36), 1);
+    }
+    while (i < program->num_of_philos)
+    {
+        if(pthread_join(program->philos[i].thread, NULL)!=0)
+        {
+            free_all_memory(program);
+            return(write(2, "Error: Failed to join philosopher thread\n", 40), 1);
+        }
+        i++;
+    }
+    return (0);
+
+}
+
+
+int must_stop_simulation(t_philo *philo)
+{
+    int is_must_stop;
 
     pthread_mutex_lock(philo->stop_mutex);
-    should_stop = *philo->should_stop;
+    is_must_stop = *philo->must_stop;
     pthread_mutex_unlock(philo->stop_mutex);
-    return should_stop;
+    return is_must_stop;
 }
 
-
-void print_status(t_philo *philo,const char *status)
+void print_status(t_philo *philo,char *status)
 {
-    if (strcmp(status, DIED) == 0)
-    {
+    pthread_mutex_lock(philo->stop_mutex);
+    if ((ft_strcmp(status, DIED) == 0)|| !*philo->must_stop)
         printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status);
-    }
-    else
-    {
-        pthread_mutex_lock(philo->stop_mutex);
-        if (!*philo->should_stop)
-            printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status);
-        pthread_mutex_unlock(philo->stop_mutex);
-    }
+    pthread_mutex_unlock(philo->stop_mutex);
 }
-
-
 
 void *philo_routine(void *argv)
 {
-    t_philo *philo;
-    
-    philo= (t_philo *)argv;
-    while (!should_stop_simulation(philo))
+    t_philo *philo = (t_philo *)argv;
+    if(philo->id % 2 == 0)
+        ft_usleep(1);
+    while (!must_stop_simulation(philo))
     {
+ 
         take_forks(philo);
         eating(philo);
         put_down_forks(philo);
         sleeping(philo);
         thinking(philo);
     }
-    pthread_exit(NULL);
+    // printf("%d exit\n",philo->id);
+    return NULL;
 }
+
