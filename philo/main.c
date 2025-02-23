@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:06:04 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 20:11:54 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/24 01:38:05 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
         return (write(2, "Error: Philosopher memory allocation failed\n", 42), 1);
     if(init_mutex(&program))
         return (write(2, "Error: Mutex initialization failed\n", 33), 1);
-	init_philos(&program, argv);
+	init_philos(&program);
     if(thread_create(&program))
         return (write(2, "Error: Thread creation failed\n", 29), 1);
     if(thread_join(&program))

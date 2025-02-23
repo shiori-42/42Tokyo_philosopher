@@ -6,14 +6,14 @@
 #    By: shiori <shiori@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/16 19:37:40 by shiori            #+#    #+#              #
-#    Updated: 2025/02/23 22:58:25 by shiori           ###   ########.fr        #
+#    Updated: 2025/02/24 01:15:27 by shiori           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
 NAME = philo
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread 
+CFLAGS = -Wall -Wextra -Werror -pthread -g -fsanitize=thread
 INCLUDES = -I./include
 SRCS =  init.c main.c monitor.c philo_routine.c thread.c utils.c libft.c
 OBJS = $(SRCS:.c=.o)

@@ -12,19 +12,16 @@
 
 #include "philo.h"
 
-void	set_philo_input(t_program *program,t_philo *philo, char **argv, int i)
+void	set_philo_input(t_program *program,t_philo *philo, int i)
 {
-	philo->num_of_philos = ft_atoi(argv[1]);
-	philo->time_to_die = ft_atoi(argv[2]);
-	philo->time_to_eat = ft_atoi(argv[3]);
-	philo->time_to_sleep = ft_atoi(argv[4]);
-	if (argv[5])
-		philo->must_eat_count = ft_atoi(argv[5]);
-	else
-        philo->must_eat_count = -1;
+	
     philo->id = i + 1;
     philo->eat_count = 0;
     philo->ate_philos_num = &program->ate_philos_num;
+    philo->time_to_die = program->time_to_die;
+	philo->time_to_eat = program->time_to_eat;
+	philo->time_to_sleep = program->time_to_sleep;
+	philo->must_eat_count = program->must_eat_count;
     philo->start_time = get_current_time();
     philo->last_meal_time = get_current_time();
     philo->must_stop = &program->must_stop;
@@ -35,14 +32,14 @@ void	set_philo_input(t_program *program,t_philo *philo, char **argv, int i)
     philo->right_fork = &program->forks[(i-1 + philo->num_of_philos) % philo->num_of_philos];
 }
 
-void	init_philos(t_program *program, char **argv)
+void	init_philos(t_program *program)
 {
 	int	i;
 
 	i = 0;
     while (i < program->num_of_philos)
 	{
-        set_philo_input(program,&program->philos[i], argv,i);
+        set_philo_input(program,&program->philos[i],i);
 		i++;
 	}
 }
@@ -96,6 +93,13 @@ void init_program(t_program *program, char **argv)
     program->stop_mutex_init = false;
     program->eat_mutex_init = false;
     program->time_mutex_init = false;
+	program->time_to_die = ft_atoi(argv[2]);
+	program->time_to_eat = ft_atoi(argv[3]);
+	program->time_to_sleep = ft_atoi(argv[4]);
+	if (argv[5])
+		program->must_eat_count = ft_atoi(argv[5]);
+	else
+        program->must_eat_count = -1;
 }
 
 

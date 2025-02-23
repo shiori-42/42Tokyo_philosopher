@@ -6,7 +6,7 @@
 /*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 22:43:37 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/24 01:20:11 by shiori           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,15 @@ int must_stop_simulation(t_philo *philo)
 
 void print_status(t_philo *philo,char *status)
 {
-    pthread_mutex_lock(philo->stop_mutex);
-    if ((ft_strcmp(status, DIED) == 0)|| !*philo->must_stop)
-        printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status);
-    pthread_mutex_unlock(philo->stop_mutex);
+    if (ft_strcmp(status, DIED) == 0)
+      printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status);
+    else
+    {
+      pthread_mutex_lock(philo->stop_mutex);
+      if (!*philo->must_stop)
+          printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id, status);
+      pthread_mutex_unlock(philo->stop_mutex);
+    }
 }
 
 void *philo_routine(void *argv)
