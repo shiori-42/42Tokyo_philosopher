@@ -6,7 +6,7 @@
 /*   By: syonekur <syonekur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/24 16:37:30 by syonekur         ###   ########.fr       */
+/*   Updated: 2025/02/24 18:29:25 by syonekur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	*philo_routine(void *argv)
 
 	philo = (t_philo *)argv;
 	if (philo->id % 2 == 0)
-		ft_usleep(1);
+		ft_usleep(30);
 	while (!must_stop_simulation(philo))
 	{
 		take_forks(philo);
