@@ -6,7 +6,7 @@
 /*   By: syonekur <syonekur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:06:14 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/24 14:29:07 by syonekur         ###   ########.fr       */
+/*   Updated: 2025/02/24 14:55:10 by syonekur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,5 @@ void	*monitor_routine(void *argv)
 		if (check_all_philosophers_ate(program))
 			break ;
 	}
-	pthread_exit(NULL);
+	return (NULL);
 }

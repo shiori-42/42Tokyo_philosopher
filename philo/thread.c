@@ -6,11 +6,26 @@
 /*   By: syonekur <syonekur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 18:31:05 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/24 14:36:35 by syonekur         ###   ########.fr       */
+/*   Updated: 2025/02/24 16:37:30 by syonekur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	print_status(t_philo *philo, char *status)
+{
+	if (ft_strcmp(status, DIED) == 0)
+		printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id,
+			status);
+	else
+	{
+		pthread_mutex_lock(philo->stop_mutex);
+		if (!*philo->must_stop)
+			printf("%ld %d %s\n", get_current_time() - philo->start_time,
+				philo->id, status);
+		pthread_mutex_unlock(philo->stop_mutex);
+	}
+}
 
 int	thread_create(t_program *program)
 {
@@ -67,21 +82,6 @@ int	must_stop_simulation(t_philo *philo)
 	is_must_stop = *philo->must_stop;
 	pthread_mutex_unlock(philo->stop_mutex);
 	return (is_must_stop);
-}
-
-void	print_status(t_philo *philo, char *status)
-{
-	if (ft_strcmp(status, DIED) == 0)
-		printf("%ld %d %s\n", get_current_time() - philo->start_time, philo->id,
-			status);
-	else
-	{
-		pthread_mutex_lock(philo->stop_mutex);
-		if (!*philo->must_stop)
-			printf("%ld %d %s\n", get_current_time() - philo->start_time,
-				philo->id, status);
-		pthread_mutex_unlock(philo->stop_mutex);
-	}
 }
 
 void	*philo_routine(void *argv)

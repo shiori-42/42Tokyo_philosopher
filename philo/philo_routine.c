@@ -23,6 +23,30 @@ void	sleeping(t_philo *philo)
 	ft_usleep(philo->time_to_sleep);
 }
 
+// void	take_forks(t_philo *philo)
+// {
+// 	// if (philo->id != philo->num_of_philos - 1)
+// 	// {
+// 		pthread_mutex_lock(philo->right_fork);
+// 		print_status(philo, FORK_TAKEN);
+// 		if (philo->num_of_philos == 1)
+// 		{
+// 			ft_usleep(philo->time_to_die);
+// 			pthread_mutex_unlock(philo->right_fork);
+// 			return ;
+// 		}
+// 		pthread_mutex_lock(philo->left_fork);
+// 		print_status(philo, FORK_TAKEN);
+// 	// }
+// 	// else
+// 	// {
+// 		// pthread_mutex_lock(philo->left_fork);
+// 		// print_status(philo, FORK_TAKEN);
+// 		// pthread_mutex_lock(philo->right_fork);
+// 		// print_status(philo, FORK_TAKEN);
+// 	// }
+// }
+
 void	take_forks(t_philo *philo)
 {
 	if (philo->num_of_philos == 1)
@@ -35,16 +59,16 @@ void	take_forks(t_philo *philo)
 	}
 	if (philo->id % 2 == 0)
 	{
-		pthread_mutex_lock(philo->left_fork);
-		print_status(philo, FORK_TAKEN);
 		pthread_mutex_lock(philo->right_fork);
+		print_status(philo, FORK_TAKEN);
+		pthread_mutex_lock(philo->left_fork);
 		print_status(philo, FORK_TAKEN);
 	}
 	else
 	{
-		pthread_mutex_lock(philo->right_fork);
-		print_status(philo, FORK_TAKEN);
 		pthread_mutex_lock(philo->left_fork);
+		print_status(philo, FORK_TAKEN);
+		pthread_mutex_lock(philo->right_fork);
 		print_status(philo, FORK_TAKEN);
 	}
 }
