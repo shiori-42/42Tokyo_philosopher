@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
+/*   By: syonekur <syonekur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 17:10:04 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 23:03:11 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/24 14:28:52 by syonekur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,37 +31,34 @@ int	ft_usleep(long milliseconds)
 	return (0);
 }
 
-static void destroy_basic_mutexes(t_program *program)
+static void	destroy_basic_mutexes(t_program *program)
 {
-    if (program->stop_mutex_init)
-        pthread_mutex_destroy(&program->stop_mutex);
-    if (program->eat_mutex_init)
-        pthread_mutex_destroy(&program->eat_mutex); 
-    if (program->time_mutex_init)
-        pthread_mutex_destroy(&program->time_mutex);
+	if (program->stop_mutex_init)
+		pthread_mutex_destroy(&program->stop_mutex);
+	if (program->eat_mutex_init)
+		pthread_mutex_destroy(&program->eat_mutex);
+	if (program->time_mutex_init)
+		pthread_mutex_destroy(&program->time_mutex);
 }
 
-void free_all_memory(t_program *program)
+void	free_all_memory(t_program *program)
 {
-    int i;
+	int	i;
 
-    destroy_basic_mutexes(program);
-
-    if (program->forks && program->forks_init)
-    {
-        i = 0;
-        while (i < program->num_of_philos)
-        {
-            if (program->forks_init[i])
-                pthread_mutex_destroy(&program->forks[i]);
-            i++;
-        }
-        free(program->forks_init);
-    }
-    if (program->forks)
-        free(program->forks);
-    if (program->philos)
-        free(program->philos);
+	destroy_basic_mutexes(program);
+	if (program->forks && program->forks_init)
+	{
+		i = 0;
+		while (i < program->num_of_philos)
+		{
+			if (program->forks_init[i])
+				pthread_mutex_destroy(&program->forks[i]);
+			i++;
+		}
+		free(program->forks_init);
+	}
+	if (program->forks)
+		free(program->forks);
+	if (program->philos)
+		free(program->philos);
 }
-
-

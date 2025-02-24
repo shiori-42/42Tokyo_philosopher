@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shiori <shiori@student.42.fr>              +#+  +:+       +#+        */
+/*   By: syonekur <syonekur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 19:01:00 by shiori            #+#    #+#             */
-/*   Updated: 2025/02/23 19:06:19 by shiori           ###   ########.fr       */
+/*   Updated: 2025/02/24 14:35:29 by syonekur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,26 @@ int	ft_strcmp(char *s1, char *s2)
 	}
 	return (0);
 }
-int ft_atoi(char *str)
+
+int	ft_atoi(char *str)
 {
-    int i=0;
-    int sign=1;
-    int result=0;
-  
-    if(str[i]=='-' || str[i]=='+')
-    {
-        if(str[i]=='-')
-            sign=-1;
-        i++;
-    }
-    while(str[i]>='0' && str[i]<='9')
-    {
-        result=result*10+(str[i]-'0');
-        i++;
-    } 
-    return (sign*result);
+	int	i;
+	int	sign;
+	int	result;
+
+	i = 0;
+	sign = 1;
+	result = 0;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			sign = -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		result = result * 10 + (str[i] - '0');
+		i++;
+	}
+	return (sign * result);
 }
